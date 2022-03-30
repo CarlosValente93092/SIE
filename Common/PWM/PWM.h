@@ -40,6 +40,8 @@
 #define PWM_SETUP_SUCCESS 0
 #define PWM_SETUP_ERROR -1
 
+#define PWM_MAX_VALUE 1000
+
 /********************************************************************
 * Function: 	getOCXRS()
 * Precondition:
@@ -72,5 +74,12 @@ int setupPWM2(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mod
 int setupPWM3(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode);
 int setupPWM4(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode);
 int setupPWM5(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode);
+
+void changeDutyCycle1(unsigned int chooseTimer, unsigned int dutyCycle);
+void changeDutyCycle2(unsigned int chooseTimer, unsigned int dutyCycle);
+void changeDutyCycle3(unsigned int chooseTimer, unsigned int dutyCycle);
+void changeDutyCycle4(unsigned int chooseTimer, unsigned int dutyCycle);
+void changeDutyCycle5(unsigned int chooseTimer, unsigned int dutyCycle);
+
 
 #endif

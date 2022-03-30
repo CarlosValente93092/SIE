@@ -36,6 +36,8 @@ int main(void) {
     TRISEbits.TRISE4 = TRIS_OUT; //Set port G9 to output (pin 53)
     TRISEbits.TRISE5 = TRIS_OUT; //Set port G9 to output (pin 53)
 
+    TRISAbits.TRISA4 = TRIS_OUT; //Set port G9 to output (pin 53)
+
     PORTEbits.RE0 = 0;
     PORTEbits.RE4 = 0;
     PORTEbits.RE5 = 0;
@@ -105,20 +107,8 @@ int main(void) {
                 /* Toggle led state */
                 PORTAINV = 0x08;
                 break;
-            case 'm':
-                PORTEbits.RE0 = 1;
-                PORTEbits.RE4 = 1;
-                PORTEbits.RE5 = 0;
-                break;
-            case 'n':
-                PORTEbits.RE0 = 1;
-                PORTEbits.RE4 = 0;
-                PORTEbits.RE5 = 1;
-                break;
             case 's':
-                PORTEbits.RE0 = 0;
-                PORTEbits.RE4 = 0;
-                PORTEbits.RE5 = 0;
+                changeDutyCycle5(1, 0);
                 break;
             case 'j':
                 changeDutyCycle5(1, 250);
@@ -128,6 +118,9 @@ int main(void) {
                 break;
             case 'l':
                 changeDutyCycle5(1, 750);
+                break;
+            case 'e':
+                PORTAbits.RA4 = !PORTAbits.RA4;
                 break;
             default:
                 break;

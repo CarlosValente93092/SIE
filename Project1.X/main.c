@@ -26,55 +26,81 @@
 #define TRIS_OUT    0       //Define TRIS as output
 #define TRIS_IN     1       //Define TRIS as input
 
+#define USE_TIMER_2 0
+#define USE_TIMER_3 1
+
+void printMenu(void);
+
 int main(void) {
 
+    TRISAbits.TRISA3 = TRIS_OUT; //Set port A3 to output, led4
+    TRISAbits.TRISA4 = TRIS_OUT; //Set port A4 to output, pin 72
 
-    TRISAbits.TRISA3 = TRIS_OUT; //Set port A3 to output (LED4)
-    PORTAbits.RA3 = 0;
+    TRISDbits.TRISD1 = TRIS_OUT; //Set port D1 to output, pin 5
+    TRISDbits.TRISD2 = TRIS_OUT; //Set port D2 to output, pin 6
 
-    int Fout = 100; //Hz
-    if (setupTimer4(Fout, TIMER_USE_POLLING) == TIMER_SETUP_ERROR) {
-        PORTAbits.RA3 = 0;
-        putString("TIMER ERROR\n");
-        return -1; //Error occurred
-    }
+    TRISDbits.TRISD7 = TRIS_IN; //Set port D7 to input, pin 77
+    TRISDbits.TRISD9 = TRIS_IN; //Set port D9 to input, pin 74
+
 
     if (setupUART(115200, 0) != SETUP_UART_SUCCESS) {
         PORTAbits.RA3 = 0;
-        putString("UART ERROR\n");
         return -1; //Error occurred
     }
 
-    if (setupADC(2, 1, 0) != SETUP_ADC_SUCCESS) {
+    int Fout = 20000; //Hz
+    if (setupTimer2(Fout, TIMER_USE_POLLING) == TIMER_SETUP_ERROR) {
         PORTAbits.RA3 = 0;
-        putString("ADC ERROR\n");
         return -1; //Error occurred
     }
 
-    int Ton = 1; // seconds
-    int count = 0;
-    uint64_t rawValue;
+    unsigned int PWM_TIMER = USE_TIMER_2;
+    if (setupPWM2(PWM_TIMER, 0, 7) == PWM_SETUP_ERROR) {
+        PORTAbits.RA3 = 0;
+        return -1; //Error occurred
+    }
+    if (setupPWM3(PWM_TIMER, 0, 7) == PWM_SETUP_ERROR) {
+        PORTAbits.RA3 = 0;
+        return -1; //Error occurred
+    }
+
+
+    PORTAbits.RA3 = 1;
+    PORTAbits.RA4 = 0;
+    uint8_t c;
+    printMenu();
     while (1) {
-        waitTimer4();
-        resetTimer4();
-        count = count + 1;
-        if (count > Ton * Fout) {
-            count = 0;
-            PORTAbits.RA3 = !PORTAbits.RA3;
+        if (getChar(&c) != SETUP_UART_SUCCESS)
+            continue;
 
-            startADC();
-            waitADC();
-            int voltage = getValuesADC(&rawValue);
-            resetADC();
-
-            putString("Voltage: ");
-            putInt(voltage);
-            putString(" ,Mean: ");
-            putInt(rawValue);
-            putString("\n\r");
+        switch (c) {
+            case 'm':
+                changeDutyCycle2(PWM_TIMER, 500);
+                changeDutyCycle3(PWM_TIMER, 0);
+                break;
+            case 'n':
+                changeDutyCycle2(PWM_TIMER, 0);
+                changeDutyCycle3(PWM_TIMER, 500);
+                break;
+            case 's':
+                changeDutyCycle2(PWM_TIMER, 0);
+                changeDutyCycle3(PWM_TIMER, 0);
+                break;
+            case 'e':
+                PORTAbits.RA4 = !PORTAbits.RA4;
+                break;
+            default:
+                break;
         }
 
     }
 
     return (EXIT_SUCCESS);
+}
+
+void printMenu(void) {
+    putString("Commands:\r\n");
+    putString("'+': turn led on\r\n");
+    putString("'-': turn led off\r\n");
+    putString("'x': toggle led state\r\n\r\n");
 }

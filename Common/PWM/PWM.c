@@ -11,6 +11,7 @@
   @Summary
     Set of functions to use PWM in PIC32MX795F512L
     Resolution is given as log2(Fprescaler / Fout)
+    PWM with a resolution of 500 steps (0.2 between each value)
     Pins:
         PW1, OC1, pin 3,  RE8
         PW2, OC2, pin 5,  RD1
@@ -40,15 +41,15 @@
 int getOCXRS(unsigned int chooseTimer, unsigned int dutyCycle) {
     if (chooseTimer) {
 
-        return (PR3 * dutyCycle) / 100; //Timer 3
+        return (PR3 * dutyCycle) / PWM_MAX_VALUE; //Timer 3
     }
 
-    return (PR2 * dutyCycle) / 100; //Timer 2
+    return (PR2 * dutyCycle) / PWM_MAX_VALUE; //Timer 2
 }
 
 int setupPWM1(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
     if (chooseTimer > 1) return PWM_SETUP_ERROR;
-    if (dutyCycle > 100) return PWM_SETUP_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
     if (mode > 7) return PWM_SETUP_ERROR;
 
     OC1CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
@@ -61,7 +62,7 @@ int setupPWM1(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mod
 
 int setupPWM2(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
     if (chooseTimer > 2) return PWM_SETUP_ERROR;
-    if (dutyCycle > 100) return PWM_SETUP_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
     if (mode > 7) return PWM_SETUP_ERROR;
 
     OC2CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
@@ -74,7 +75,7 @@ int setupPWM2(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mod
 
 int setupPWM3(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
     if (chooseTimer > 2) return PWM_SETUP_ERROR;
-    if (dutyCycle > 100) return PWM_SETUP_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
     if (mode > 7) return PWM_SETUP_ERROR;
 
     OC3CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
@@ -87,7 +88,7 @@ int setupPWM3(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mod
 
 int setupPWM4(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
     if (chooseTimer > 2) return PWM_SETUP_ERROR;
-    if (dutyCycle > 100) return PWM_SETUP_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
     if (mode > 7) return PWM_SETUP_ERROR;
 
     OC4CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
@@ -100,7 +101,7 @@ int setupPWM4(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mod
 
 int setupPWM5(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
     if (chooseTimer > 2) return PWM_SETUP_ERROR;
-    if (dutyCycle > 100) return PWM_SETUP_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
     if (mode > 7) return PWM_SETUP_ERROR;
 
     OC5CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
@@ -109,4 +110,24 @@ int setupPWM5(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mod
     OC5CONbits.ON = 1; // Enable OC1 module
 
     return PWM_SETUP_SUCCESS;
+}
+
+void changeDutyCycle1(unsigned int chooseTimer, unsigned int dutyCycle) {
+    OC1RS = getOCXRS(chooseTimer, dutyCycle);
+}
+
+void changeDutyCycle2(unsigned int chooseTimer, unsigned int dutyCycle) {
+    OC2RS = getOCXRS(chooseTimer, dutyCycle);
+}
+
+void changeDutyCycle3(unsigned int chooseTimer, unsigned int dutyCycle) {
+    OC3RS = getOCXRS(chooseTimer, dutyCycle);
+}
+
+void changeDutyCycle4(unsigned int chooseTimer, unsigned int dutyCycle) {
+    OC4RS = getOCXRS(chooseTimer, dutyCycle);
+}
+
+void changeDutyCycle5(unsigned int chooseTimer, unsigned int dutyCycle) {
+    OC5RS = getOCXRS(chooseTimer, dutyCycle);
 }
