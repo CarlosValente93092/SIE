@@ -17,6 +17,7 @@
                 <sourceRootElem>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/PWM</sourceRootElem>
                 <sourceRootElem>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/Timers</sourceRootElem>
                 <sourceRootElem>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/UART</sourceRootElem>
+                <sourceRootElem>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

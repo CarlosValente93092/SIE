@@ -28,7 +28,7 @@ int getCloserPrescaler(uint64_t frequencyRatio, unsigned int prescalersList[], u
     }
 }
 
-int setupTimer1(unsigned int Fout, unsigned int useInterrupts) {
+int setupTimer1(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority) {
     unsigned int numberOfPrescalers = 4;
     unsigned int prescalersAvailable[] = {1, 8, 64, 256};
 
@@ -44,13 +44,14 @@ int setupTimer1(unsigned int Fout, unsigned int useInterrupts) {
     if (useInterrupts) {
         IPC1bits.T1IP = 2; // Interrupt priority (must be in range [1..6])
         IEC0bits.T1IE = 1; // Enable timer T1 interrupts
+        IFS0bits.T1IF = 0; // Reset interrupt flag for timer 1
     }
     T1CONbits.TON = 1; // Enable timer T1
 
     return TIMER_SETUP_SUCCESS;
 }
 
-int setupTimer2(unsigned int Fout, unsigned int useInterrupts) {
+int setupTimer2(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority) {
     unsigned int numberOfPrescalers = 8;
     unsigned int prescalersAvailable[] = {1, 2, 4, 8, 16, 32, 64, 256};
 
@@ -64,15 +65,16 @@ int setupTimer2(unsigned int Fout, unsigned int useInterrupts) {
     TMR2 = 0; // Reset timer T2 count register
 
     if (useInterrupts) {
-        IPC2bits.T2IP = 2; // Interrupt priority (must be in range [1..6])
+        IPC2bits.T2IP = interruptPriority; // Interrupt priority (must be in range [1..6])
         IEC0bits.T2IE = 1; // Enable timer T2 interrupts
+        IFS0bits.T2IF = 0; // Reset interrupt flag for timer 2
     }
     T2CONbits.TON = 1; // Enable timer T2
 
     return TIMER_SETUP_SUCCESS;
 }
 
-int setupTimer3(unsigned int Fout, unsigned int useInterrupts) {
+int setupTimer3(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority) {
     unsigned int numberOfPrescalers = 8;
     unsigned int prescalersAvailable[] = {1, 2, 4, 8, 16, 32, 64, 256};
 
@@ -86,8 +88,9 @@ int setupTimer3(unsigned int Fout, unsigned int useInterrupts) {
     TMR3 = 0; // Reset timer T3 count register
 
     if (useInterrupts) {
-        IPC3bits.T3IP = 2; // Interrupt priority (must be in range [1..6])
+        IPC3bits.T3IP = interruptPriority; // Interrupt priority (must be in range [1..6])
         IEC0bits.T3IE = 1; // Enable timer T3 interrupts
+        IFS0bits.T3IF = 0; // Reset interrupt flag for timer 3
     }
     T3CONbits.TON = 1; // Enable timer T3
 
@@ -95,7 +98,7 @@ int setupTimer3(unsigned int Fout, unsigned int useInterrupts) {
     return TIMER_SETUP_SUCCESS;
 }
 
-int setupTimer4(unsigned int Fout, unsigned int useInterrupts) {
+int setupTimer4(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority) {
     unsigned int numberOfPrescalers = 8;
     unsigned int prescalersAvailable[] = {1, 2, 4, 8, 16, 32, 64, 256};
 
@@ -109,15 +112,16 @@ int setupTimer4(unsigned int Fout, unsigned int useInterrupts) {
     TMR4 = 0; // Reset timer T4 count register
 
     if (useInterrupts) {
-        IPC4bits.T4IP = 2; // Interrupt priority (must be in range [1..6])
+        IPC4bits.T4IP = interruptPriority; // Interrupt priority (must be in range [1..6])
         IEC0bits.T4IE = 1; // Enable timer T4 interrupts
+        IFS0bits.T4IF = 0; // Reset interrupt flag for timer 4
     }
     T4CONbits.TON = 1; // Enable timer T4
 
     return TIMER_SETUP_SUCCESS;
 }
 
-int setupTimer5(unsigned int Fout, unsigned int useInterrupts) {
+int setupTimer5(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority) {
     unsigned int numberOfPrescalers = 8;
     unsigned int prescalersAvailable[] = {1, 2, 4, 8, 16, 32, 64, 256};
 
@@ -131,8 +135,9 @@ int setupTimer5(unsigned int Fout, unsigned int useInterrupts) {
     TMR5 = 0; // Reset timer T5 count register
 
     if (useInterrupts) {
-        IPC5bits.T5IP = 2; // Interrupt priority (must be in range [1..6])
+        IPC5bits.T5IP = interruptPriority; // Interrupt priority (must be in range [1..6])
         IEC0bits.T5IE = 1; // Enable timer T5 interrupts
+        IFS0bits.T5IF = 0; // Reset interrupt flag for timer 5
     }
     T5CONbits.TON = 1; // Enable timer T5
 

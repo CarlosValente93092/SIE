@@ -48,68 +48,78 @@ int getOCXRS(unsigned int chooseTimer, unsigned int dutyCycle) {
 }
 
 int setupPWM1(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
-    if (chooseTimer > 1) return PWM_SETUP_ERROR;
-    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
-    if (mode > 7) return PWM_SETUP_ERROR;
+    if (chooseTimer > 1) return SETUP_PWM_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return SETUP_PWM_ERROR;
+    if (mode > 7) return SETUP_PWM_ERROR;
+
+    TRISEbits.TRISE8 = 0; //Set port RE8 to output, pin 3
 
     OC1CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
     OC1CONbits.OCTSEL = chooseTimer; // Use timer T2 (0) or T3 (1) as the time base for PWM generation
     OC1RS = getOCXRS(chooseTimer, dutyCycle);
     OC1CONbits.ON = 1; // Enable OC1 module
 
-    return PWM_SETUP_SUCCESS;
+    return SETUP_PWM_SUCCESS;
 }
 
 int setupPWM2(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
-    if (chooseTimer > 2) return PWM_SETUP_ERROR;
-    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
-    if (mode > 7) return PWM_SETUP_ERROR;
+    if (chooseTimer > 2) return SETUP_PWM_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return SETUP_PWM_ERROR;
+    if (mode > 7) return SETUP_PWM_ERROR;
+
+    TRISDbits.TRISD1 = 0; //Set port RD1 to output, pin 5
 
     OC2CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
     OC2CONbits.OCTSEL = chooseTimer; // Use timer T2 (0) or T3 (1) as the time base for PWM generation
     OC2RS = getOCXRS(chooseTimer, dutyCycle);
     OC2CONbits.ON = 1; // Enable OC1 module
 
-    return PWM_SETUP_SUCCESS;
+    return SETUP_PWM_SUCCESS;
 }
 
 int setupPWM3(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
-    if (chooseTimer > 2) return PWM_SETUP_ERROR;
-    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
-    if (mode > 7) return PWM_SETUP_ERROR;
+    if (chooseTimer > 2) return SETUP_PWM_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return SETUP_PWM_ERROR;
+    if (mode > 7) return SETUP_PWM_ERROR;
+
+    TRISDbits.TRISD2 = 0; //Set port RD2 to output, pin 6
 
     OC3CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
     OC3CONbits.OCTSEL = chooseTimer; // Use timer T2 (0) or T3 (1) as the time base for PWM generation
     OC3RS = getOCXRS(chooseTimer, dutyCycle);
     OC3CONbits.ON = 1; // Enable OC1 module
 
-    return PWM_SETUP_SUCCESS;
+    return SETUP_PWM_SUCCESS;
 }
 
 int setupPWM4(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
-    if (chooseTimer > 2) return PWM_SETUP_ERROR;
-    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
-    if (mode > 7) return PWM_SETUP_ERROR;
+    if (chooseTimer > 2) return SETUP_PWM_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return SETUP_PWM_ERROR;
+    if (mode > 7) return SETUP_PWM_ERROR;
+
+    TRISDbits.TRISD3 = 0; //Set port RD3 to output, pin 9
 
     OC4CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
     OC4CONbits.OCTSEL = chooseTimer; // Use timer T2 (0) or T3 (1) as the time base for PWM generation
     OC4RS = getOCXRS(chooseTimer, dutyCycle);
     OC4CONbits.ON = 1; // Enable OC1 module
 
-    return PWM_SETUP_SUCCESS;
+    return SETUP_PWM_SUCCESS;
 }
 
 int setupPWM5(unsigned int chooseTimer, unsigned int dutyCycle, unsigned int mode) {
-    if (chooseTimer > 2) return PWM_SETUP_ERROR;
-    if (dutyCycle > PWM_MAX_VALUE) return PWM_SETUP_ERROR;
-    if (mode > 7) return PWM_SETUP_ERROR;
+    if (chooseTimer > 2) return SETUP_PWM_ERROR;
+    if (dutyCycle > PWM_MAX_VALUE) return SETUP_PWM_ERROR;
+    if (mode > 7) return SETUP_PWM_ERROR;
+
+    TRISDbits.TRISD4 = 0; //Set port RD4 to output, pin 10
 
     OC5CONbits.OCM = mode; // PWM mode on OCx; fault pin disabled
     OC5CONbits.OCTSEL = chooseTimer; // Use timer T2 (0) or T3 (1) as the time base for PWM generation
     OC5RS = getOCXRS(chooseTimer, dutyCycle);
     OC5CONbits.ON = 1; // Enable OC1 module
 
-    return PWM_SETUP_SUCCESS;
+    return SETUP_PWM_SUCCESS;
 }
 
 void changeDutyCycle1(unsigned int chooseTimer, unsigned int dutyCycle) {

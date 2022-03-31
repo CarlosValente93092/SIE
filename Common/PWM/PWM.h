@@ -37,8 +37,8 @@
 #ifndef _PWM_PIC32_H 
 #define _PWM_PIC32_H
 
-#define PWM_SETUP_SUCCESS 0
-#define PWM_SETUP_ERROR -1
+#define SETUP_PWM_SUCCESS 0
+#define SETUP_PWM_ERROR -1
 
 #define PWM_MAX_VALUE 1000
 

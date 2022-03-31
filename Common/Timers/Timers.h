@@ -56,11 +56,11 @@ int getCloserPrescaler(uint64_t frequencyRatio, unsigned int prescalersList[], u
 * Note:		 	TODO: Add interrupt bool in case it is needed
 *
 ********************************************************************/
-int setupTimer1(unsigned int Fout, unsigned int useInterrupts);
-int setupTimer2(unsigned int Fout, unsigned int useInterrupts);
-int setupTimer3(unsigned int Fout, unsigned int useInterrupts);
-int setupTimer4(unsigned int Fout, unsigned int useInterrupts);
-int setupTimer5(unsigned int Fout, unsigned int useInterrupts);
+int setupTimer1(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority);
+int setupTimer2(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority);
+int setupTimer3(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority);
+int setupTimer4(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority);
+int setupTimer5(unsigned int Fout, unsigned int useInterrupts, unsigned int interruptPriority);
 
 /********************************************************************
 * Function: 	waitTimerX()

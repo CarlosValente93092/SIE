@@ -8,6 +8,7 @@
       <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/PWM/PWM.h</itemPath>
       <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/Timers/Timers.h</itemPath>
       <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/UART/UART.h</itemPath>
+      <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt/ExternalInterrupt.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -21,6 +22,7 @@
       <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/PWM/PWM.c</itemPath>
       <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/Timers/Timers.c</itemPath>
       <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/UART/UART.c</itemPath>
+      <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt/ExternalInterrupt.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -33,6 +35,7 @@
     <Elem>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/PWM</Elem>
     <Elem>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/Timers</Elem>
     <Elem>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/UART</Elem>
+    <Elem>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -42,7 +45,7 @@
         <targetDevice>PIC32MX795F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool></platformTool>
+        <platformTool>PK3OBPlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>4.00</languageToolchainVersion>
         <platform>2</platform>
@@ -213,6 +216,9 @@
         <property key="stack-smashing" value=""/>
         <property key="wpo-lto" value="false"/>
       </C32Global>
+      <PK3OBPlatformTool>
+        <property key="firmware.download.all" value="false"/>
+      </PK3OBPlatformTool>
     </conf>
   </confs>
 </configurationDescriptor>
