@@ -95,7 +95,7 @@ int main(void) {
     }
 
     unsigned int PWM_TIMER = USE_TIMER_2;
-    if (setupPWM2(PWM_TIMER, 0, 7) == SETUP_PWM_ERROR) { //Pin 5, RD1
+    if (setupPWM2(PWM_TIMER, 500, 6) == SETUP_PWM_ERROR) { //Pin 5, RD1
         PORTAbits.RA3 = 0;
         return -1; //Error occurred
     }
@@ -139,14 +139,12 @@ int main(void) {
                 continue;
             case 13: //ENTER
                 if (MENU == 0) break;
-                __builtin_disable_interrupts();
                 if (!validateCommand(command, index, MENU)) {
                     putString(clearLine);
                     putString("Error! Invalid input!");
                     continue;
                 }
                 executeCommand(command, index, MENU);
-                __builtin_enable_interrupts();
                 continue;
             case 27: //ESC
                 if (MENU == 0) break;
@@ -206,29 +204,40 @@ void printMenu3(void) {
 }
 
 unsigned int validateCommand(uint8_t *command, unsigned int sizeOfArray, unsigned int menu) {
+    unsigned int i = 0;
+    unsigned int commandFinished = 0;
+
     for (int i = 0; i < sizeOfArray; i++) {
-        if ((command[i] >= '0' && command[i] <= '9') || command[i] == '+' || command[i] == '-')
+        if ((command[i] >= '0' && command[i] <= '9') || command[i] == '+' || command[i] == '-') { //Valid inputs
+            switch (menu) {
+                case 1:
+                    if (i == 0 && (command[i] == '+' || command[i] == '-')) {
+                        return 0; //First digit must be a number
+                    }
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+            }
             continue;
+        }
+
         return 0; //The condition above was not verified, error!
     }
     return 1;
 }
 
 void executeCommand(uint8_t *command, unsigned int sizeOfArray, unsigned int menu) {
-    uint8_t h = 0;
-    unsigned int x = 0;
-    unsigned int y = 0;
-    unsigned int z = 0;
-
     unsigned int wantedRPM = 0;
+    unsigned int wantedRotation = 0;
     switch (menu) {
         case 1:
-            if (command[sizeOfArray - 1] == '+') rotation = ROTATING_TO_RIGHT;
-            if (command[sizeOfArray - 1] == '-') rotation = ROTATING_TO_LEFT;
+            if (command[sizeOfArray - 1] == '+') wantedRotation = ROTATING_TO_RIGHT;
+            if (command[sizeOfArray - 1] == '-') wantedRotation = ROTATING_TO_LEFT;
             for (int i = 0; i < sizeOfArray - 1; i++) {
                 wantedRPM += (command[i] - 48) * raiseToPower(10, sizeOfArray - 2 - i);
             }
-            putInt(wantedRPM);
             break;
         case 2:
             break;
