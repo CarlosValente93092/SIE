@@ -8,6 +8,7 @@
       <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/PWM/PWM.h</itemPath>
       <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/Timers/Timers.h</itemPath>
       <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/UART/UART.h</itemPath>
+      <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt/ExternalInterrupt.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -21,6 +22,7 @@
       <itemPath>../Common/ADC/ADC.c</itemPath>
       <itemPath>../Common/Timers/Timers.c</itemPath>
       <itemPath>../Common/PWM/PWM.c</itemPath>
+      <itemPath>/home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt/ExternalInterrupt.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -39,7 +41,7 @@
         <targetDevice>PIC32MX795F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool></platformTool>
+        <platformTool>PK3OBPlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>4.00</languageToolchainVersion>
         <platform>2</platform>

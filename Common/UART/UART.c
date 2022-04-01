@@ -23,7 +23,7 @@
 
 #define SIZE_NUMBER_DECIMAL 10
 
-int setupUART(unsigned int baudrate, unsigned int useInterrupts) {
+int setupUART(unsigned int baudrate, unsigned int useInterrupts, unsigned int interruptPriority) {
     if ((baudrate > 115200) || (baudrate < 600)) return SETUP_UART_ERROR;
     U1BRG = ((PBCLOCK + 8 * baudrate) / (16 * baudrate)) - 1;
 
@@ -40,7 +40,7 @@ int setupUART(unsigned int baudrate, unsigned int useInterrupts) {
 
         IEC0bits.U1TXIE = 0; //Enable transmission interrupts
         IEC0bits.U1RXIE = 1; //Enable recession interrupts
-        IPC6bits.U1IP = 2; //Define interrupt priority
+        IPC6bits.U1IP = interruptPriority; //Define interrupt priority
     }
     IFS0bits.U1RXIF = 0; //Clear recession interrupt flag
     U1MODEbits.ON = 1; //Enable UART 1

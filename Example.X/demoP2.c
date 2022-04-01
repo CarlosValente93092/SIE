@@ -31,6 +31,8 @@
 volatile unsigned int count;
 volatile unsigned int countX;
 volatile unsigned int int0_int_flag;
+volatile unsigned int RXFlag;
+volatile uint8_t character;
 
 void __ISR(_TIMER_3_VECTOR, IPL5AUTO) T3Interrupt(void) { //IPL5 is the priority for the interrupt
     count++;
@@ -43,6 +45,19 @@ void __ISR(_EXTERNAL_0_VECTOR, IPL3AUTO) ExtInt0ISR(void) { //IPL3 is the priori
     IFS0bits.INT0IF = 0; // Reset interrupt flag
 }
 
+void __ISR(_UART1_VECTOR, IPL3AUTO) UART1ISR(void) {
+    //    if (IFS0bits.U1TXIF) {
+    //        putString("Transmission\n\r");
+    //        IFS0bits.U1TXIF = 0; // Reset UART1 TX interrupt flag
+    //    }
+
+    if (IFS0bits.U1RXIF) {
+        RXFlag = 1;
+        character = U1RXREG;
+        IFS0bits.U1RXIF = 0; //reset UART1 RX interrupt flag
+    }
+}
+
 int main(void) {
     __XC_UART = 1; //Send input/output/errors to UART 1
     INTCONSET = _INTCON_MVEC_MASK; // Multi vector mode for interrupts
@@ -50,6 +65,7 @@ int main(void) {
 
     TRISAbits.TRISA3 = TRIS_OUT; //Set port A3 to output (LED4)
     TRISGbits.TRISG9 = TRIS_OUT; //Set port G9 to output (pin 53)
+    TRISGbits.TRISG8 = TRIS_OUT; //Set port G8 to output (pin 51)
 
     unsigned int Fout = 2000; //Hz
     unsigned int InterruptPriorityTimer3 = 5;
@@ -64,7 +80,7 @@ int main(void) {
         return -1; //Error occurred
     }
 
-    if (setupUART(115200, 0) != SETUP_UART_SUCCESS) {
+    if (setupUART(115200, 1, 3) != SETUP_UART_SUCCESS) {
         PORTAbits.RA3 = 0;
         return -1; //Error occurred
     }
@@ -88,8 +104,8 @@ int main(void) {
     countX = 0;
     int0_int_flag = 0;
 
-    char c;
     unsigned int halfPeriod = 1; // seconds
+    uint8_t clearLine[] = "                              "; //30 space characters to clear line
 
     putString("\r\nTest program.\r\n");
     putString("Commands:\r\n");
@@ -99,14 +115,15 @@ int main(void) {
     while (1) {
         if (count >= halfPeriod * Fout) {
             count = 0;
-            PORTGbits.RG9 = !PORTGbits.RG9; //Toggle port A3
+            PORTGbits.RG9 = !PORTGbits.RG9; //Toggle port G9
+            PORTGbits.RG8 = !PORTGbits.RG8; //Toggle port G8
         }
 
         if (int0_int_flag) {
             int0_int_flag = 0;
-            putString("Hello darling ");
+            putString(clearLine);
+            putString("\rHello ");
             putInt(countX);
-            putString("\n\r");
         }
 
         unsigned int valueADC;
@@ -116,11 +133,11 @@ int main(void) {
             IFS1bits.AD1IF = 0;
         }
 
-        //waitForChar();
-        if (getChar(&c) != SETUP_UART_SUCCESS)
-            continue;
+        if (!RXFlag) continue;
 
-        switch (c) {
+        RXFlag = 0;
+        putChar(character);
+        switch (character) {
 
             case '+':
                 /* Turn led on */
@@ -135,17 +152,20 @@ int main(void) {
                 /* Toggle led state */
                 PORTAINV = 0x08;
                 break;
-            case 's':
+            case 'g':
                 changeDutyCycle5(PWMTIMER, 0);
                 break;
-            case 'j':
+            case 'h':
                 changeDutyCycle5(PWMTIMER, 250);
                 break;
-            case 'k':
+            case 'j':
                 changeDutyCycle5(PWMTIMER, 500);
                 break;
-            case 'l':
+            case 'k':
                 changeDutyCycle5(PWMTIMER, 750);
+                break;
+            case 'l':
+                changeDutyCycle5(PWMTIMER, 1000);
                 break;
             default:
                 break;

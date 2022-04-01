@@ -37,7 +37,7 @@
  * Note:
  *
  ********************************************************************/
-int setupUART(unsigned int baudrate, unsigned int useInterrupts);
+int setupUART(unsigned int baudrate, unsigned int useInterrupts, unsigned int interruptPriority);
 
 /********************************************************************
  * Function: 	getChar()
