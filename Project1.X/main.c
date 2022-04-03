@@ -55,19 +55,40 @@ volatile unsigned int clearErrorMessage;
 volatile unsigned int Fout4;
 volatile unsigned int displayValues;
 
+//Controller variables
+volatile int dutyCycle;
+volatile int integralPartPI; //Integral part of PI
+volatile int errorPI;
+volatile int controlSignalPI;
+
+volatile unsigned int showDutyCycle;
+
 //Functions names
 unsigned int validChar(uint8_t character);
+void initVariables(void);
+
 void printMenuGeral(void);
 void printMenu1(void);
 void printMenu2(void);
 void printMenu3(void);
+void printMenu4(void);
+void printMenuDados(void);
+void printDutyCycle(void);
+
 unsigned int validateExecuteCommand(uint8_t *command, unsigned int sizeOfArray, unsigned int menu);
 void resetCommand(uint8_t *command, unsigned int sizeOfArray);
 unsigned int raiseToPower(unsigned int baseNumber, unsigned int expoentNumber);
+
 unsigned int getRPM(void);
 unsigned int getAngle();
 unsigned int getRotation();
-void printMenuDados(void);
+
+void controladorPI(unsigned int option);
+void controladorOnOff(void);
+
+void stopAtFixedAngle(void);
+
+
 
 //Interruptions
 
@@ -87,6 +108,10 @@ void __ISR(_TIMER_4_VECTOR, IPL5AUTO) T4Interrupt(void) { //IPL5 is the priority
     angularPosition = getAngle();
     pulseCount = 0; //Reset pulse count
     if (displayValues) printMenuDados();
+    if (showDutyCycle) printDutyCycle();
+    if (wantedAngularPosition != 0) stopAtFixedAngle();
+    if (wantedRPM != 0) controladorOnOff();
+    //controladorPI(1);
     resetTimer4();
 }
 
@@ -156,8 +181,7 @@ int main(void) {
     uint8_t clearLine[] = "\r                                                  \r"; //50 space characters to clear line
     uint8_t command[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     unsigned int index = 0;
-    displayValues = 0;
-    countTimer5 = 0;
+    initVariables();
 
     printMenuGeral();
     while (1) {
@@ -173,6 +197,18 @@ int main(void) {
         displayValues = 0;
 
         switch (RXChar) {
+            case '+':
+                if (MENU != 3) break;
+                dutyCycle += 50;
+                if (dutyCycle > 1000) dutyCycle = 1000;
+                changeDutyCycle2(0, dutyCycle);
+                continue;
+            case '-':
+                if (MENU != 3) break;
+                if (dutyCycle - 50 < 0) dutyCycle = 0;
+                else dutyCycle -= 50;
+                changeDutyCycle2(0, dutyCycle);
+                continue;
             case '1':
                 if (MENU != 0) break;
                 printMenu1();
@@ -188,6 +224,12 @@ int main(void) {
                 if (MENU != 0) break;
                 printMenu3();
                 MENU = 3;
+                showDutyCycle = 1;
+                continue;
+            case '4':
+                if (MENU != 0) break;
+                printMenu4();
+                MENU = 4;
                 continue;
             case 13: //ENTER
                 if (MENU == 0) break;
@@ -206,6 +248,11 @@ int main(void) {
                 if (MENU == 0) break;
                 resetCommand(command, index);
                 index = 0;
+                showDutyCycle = 0;
+                wantedAngularPosition = 0;
+                wantedRPM = 0;
+                wantedRotation = 0;
+                dutyCycle = 500;
                 printMenuGeral();
                 MENU = 0;
                 continue;
@@ -237,12 +284,22 @@ unsigned int validChar(uint8_t character) {
     return (character > 31 && character < 127); //Can print spaces, letters, numbers, ponctuation
 }
 
+void initVariables(void) {
+    showDutyCycle = 0;
+    displayValues = 0;
+    countTimer5 = 0;
+    controlSignalPI = 0;
+    integralPartPI = 0;
+    dutyCycle = 500;
+}
+
 void printMenuGeral(void) {
 
     putString("\n\r\n\r\n\rSelect mode of operation:\n\r");
     putString("1. Set motor RPM\n\r");
     putString("2. Set angle for motor to turn\n\r");
-    putString("3. Select from bundle pack\n\r");
+    putString("3. Control speed and direction of motor\n\r");
+    putString("4. Select duty cycle\n\r");
 }
 
 void printMenu1(void) {
@@ -258,10 +315,12 @@ void printMenu2(void) {
 }
 
 void printMenu3(void) {
-    putString("\n\rWelcome to bundle selector! Choose:\n\r");
-    putString("1. Perform 180 degree turn clockwise\n\r");
-    putString("2. Increase from 10 rpm to 50 rpm\n\r");
-    putString("3. Decrease from 50 rpm to 10 rpm\n\r");
+    putString("\n\rPress {+,-} to increase speed to {right,left}:\n\r");
+    putString("(Press ESC to go back to main menu)\n\r");
+}
+
+void printMenu4(void) {
+    putString("\n\rInsert Duty Cycle (0-100)%\n\r");
     putString("(Press ESC to go back to main menu)\n\r");
 }
 
@@ -315,23 +374,14 @@ unsigned int validateExecuteCommand(uint8_t *command, unsigned int sizeOfArray, 
         return 1; //All good
     }
 
-    if (menu == 3) {
-        if (sizeOfArray > 1) return 0;
-        if (command[0] == '0') return 0;
-        if (command[0] > '3') return 0;
-
-        if (command[0] == '1') {
-            putString("\r1. Perform 180 degree turn clockwise");
-            activeTimer5 = 1;
+    if (menu == 4) {
+        if (sizeOfArray > 3) return 0;
+        for (int i = 0; i < sizeOfArray; i++) {
+            if (command[i] < '0' || command[i] > '9') return 0; //Not a number
+            dutyCycle += (command[i] - 48) * raiseToPower(10, sizeOfArray - i - 1);
         }
-        if (command[0] == '2') {
-            putString("\r2. Increase from 10 rpm to 50 rpm");
-            activeTimer5 = 1;
-        }
-        if (command[0] == '3') {
-            putString("\r3. Decrease from 50 rpm to 10 rpm");
-            activeTimer5 = 1;
-        }
+        dutyCycle *= 10;
+        changeDutyCycle2(0, dutyCycle);
         return 1; //All good
     }
 
@@ -393,4 +443,62 @@ void printMenuDados(void) {
     } else if (rotation == ROTATING_TO_RIGHT) {
         putString("Clockwise");
     }
+}
+
+void controladorPI(unsigned int option) {
+    unsigned int Kp = 5;
+    unsigned int h = 1;
+    unsigned int Ti = 5;
+    int dutyCycleMotorDirection = 1;
+    if (wantedRotation == 0) dutyCycleMotorDirection = -1;
+
+    if (option == 1) {
+        //Professor Pedro Fonseca file in sweet.ua.pt website
+        int error = wantedRPM - rpm;
+        integralPartPI = integralPartPI + (Kp * h * error) / Ti;
+        int uk = Kp * error + integralPartPI;
+
+        dutyCycle += uk*dutyCycleMotorDirection;
+        changeDutyCycle2(0, dutyCycle);
+    }
+
+    if (option == 2) {
+        //PI controller given by SSD notes
+        int s0 = Kp + (Kp * h) / Ti; // s0(1) = 6
+        int s1 = -Kp; // s1(1) = -5
+        int prevError = errorPI;
+        errorPI = wantedRPM - rpm;
+        controlSignalPI = controlSignalPI + s0 * errorPI + s1*prevError;
+
+        dutyCycle += controlSignalPI*dutyCycleMotorDirection;
+        changeDutyCycle2(0, dutyCycle);
+    }
+}
+
+void controladorOnOff(void) {
+    // wantedRPM, rpm, rotation, dutyCycle
+    int U = 0;
+    int error = wantedRPM - rpm;
+    int dutyCycleMotorDirection = 1; //Increase dutyCycle when rotating right
+    if (wantedRotation == 0) dutyCycleMotorDirection = -dutyCycleMotorDirection; //Decrease dutyCycle when rotating left
+
+    if (error == 0) U = 0;
+    else if (error > 0) U = dutyCycleMotorDirection;
+    else U = -dutyCycleMotorDirection;
+
+    dutyCycle = dutyCycle + U;
+    changeDutyCycle2(0, dutyCycle);
+}
+
+void stopAtFixedAngle(void) {
+    if (angularPosition >= wantedAngularPosition) changeDutyCycle2(0, 500);
+}
+
+void printDutyCycle(void) {
+    uint8_t clearLine[] = "\r                    \r"; //50 space characters to clear line
+
+    putString(clearLine);
+    putString("Duty Cycle = ");
+    putInt(dutyCycle / 10);
+    putString("%");
 }
