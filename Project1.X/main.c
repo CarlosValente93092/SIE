@@ -71,7 +71,7 @@ void printMenuDados(void);
 
 //Interruptions
 
-void __ISR(_TIMER_5_VECTOR, IPL7AUTO) T5Interrupt(void) { //IPL5 is the priority for the interrupt
+void __ISR(_TIMER_5_VECTOR, IPL7AUTO) T5Interrupt(void) { //IPL7 is the priority for the interrupt
     if (activeTimer5) {
         countTimer5++;
         if (countTimer5 == 10) {
