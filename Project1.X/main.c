@@ -61,6 +61,7 @@ volatile int integralPartPI; //Integral part of PI
 volatile int errorPI;
 volatile int controlSignalPI;
 volatile unsigned int startingRPM;
+volatile unsigned int revolutions;
 
 volatile unsigned int showDutyCycle;
 
@@ -86,6 +87,7 @@ unsigned int getRotation();
 
 void controladorPI(unsigned int option);
 void controladorOnOff(void);
+void controladorAngularPosition(void);
 
 void stopAtFixedAngle(void);
 void stopMotor(void);
@@ -111,9 +113,9 @@ void __ISR(_TIMER_4_VECTOR, IPL5AUTO) T4Interrupt(void) { //IPL5 is the priority
     pulseCount = 0; //Reset pulse count
     if (displayValues) printMenuDados();
     if (showDutyCycle) printDutyCycle();
-    if (wantedAngularPosition != 0) stopAtFixedAngle();
+    if (wantedAngularPosition != 0) controladorAngularPosition();
     //    if (wantedRPM != 0) controladorOnOff();
-    if (wantedRPM != 0) controladorPI(1);
+    if (wantedRPM != 0) controladorPI(2);
     resetTimer4();
 }
 
@@ -262,6 +264,7 @@ int main(void) {
                 errorPI = 0;
                 controlSignalPI = 0;
                 MENU = 0;
+                revolutions = 0;
                 continue;
             case 127: //BACKSPACE
                 if (MENU == 0) break;
@@ -301,6 +304,7 @@ void initVariables(void) {
     dutyCycle = 500;
     angularPosition = 0;
     startingRPM = 0;
+    revolutions = 0;
 }
 
 void printMenuGeral(void) {
@@ -371,6 +375,8 @@ unsigned int validateExecuteCommand(uint8_t *command, unsigned int sizeOfArray, 
 
         unsigned int angleStart = 0;
         wantedAngularPosition = 0;
+        revolutions = 0;
+        angularPosition = 0;
         if (command[0] == '+') {
             angleStart = 1;
             wantedRotation = ROTATING_TO_RIGHT;
@@ -432,6 +438,8 @@ unsigned int getRPM(void) { // em rpm
 
 unsigned int getAngle() {
     //2 degrees per pulse
+    if ((angularPosition + (pulseCount * 2) / 9) >= 360)
+        revolutions++;
     return (angularPosition + (pulseCount * 2) / 9) % 360;
 }
 
@@ -468,12 +476,14 @@ void controladorPI(unsigned int option) {
     unsigned int h = 1;
     unsigned int Ti = 5;
 
-    if (startingRPM) {
-        if (dutyCycle > 490 && dutyCycle < 510)
+    if (wantedRotation != rotation && startingRPM) {
+        if (dutyCycle > 490 && dutyCycle < 510) {
             startingRPM = 0;
-        if (500 - dutyCycle < 0) dutyCycle -= 10;
-        else dutyCycle += 10;
-        changeDutyCycle2(0, dutyCycle);
+        } else {
+            if (500 - dutyCycle < 0) dutyCycle -= 10;
+            else dutyCycle += 10;
+            changeDutyCycle2(0, dutyCycle);
+        }
     } else {
         int dutyCycleMotorDirection = 1;
         if (wantedRotation == ROTATING_TO_LEFT) dutyCycleMotorDirection = -dutyCycleMotorDirection;
@@ -524,11 +534,6 @@ void controladorOnOff(void) {
     changeDutyCycle2(0, dutyCycle);
 }
 
-void stopAtFixedAngle(void) {
-    changeDutyCycle2(0, 750);
-    if (angularPosition >= wantedAngularPosition) changeDutyCycle2(0, 500);
-}
-
 void printDutyCycle(void) {
     uint8_t clearLine[] = "\r                    \r"; //50 space characters to clear line
 
@@ -536,4 +541,15 @@ void printDutyCycle(void) {
     putString("Duty Cycle = ");
     putInt(dutyCycle / 10);
     putString("%");
+}
+
+void controladorAngularPosition() {
+    int error = wantedAngularPosition - (angularPosition + 360 * revolutions);
+    if (error < 20)
+        changeDutyCycle2(0, 500);
+    else {
+        int rotate = 1; //Increase dutyCycle when rotating right
+        if (wantedRotation == ROTATING_TO_LEFT) rotate = -1; //Decrease dutyCycle when rotating left
+        changeDutyCycle2(0, 500 + 200 * rotate);
+    }
 }
