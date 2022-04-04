@@ -61,7 +61,6 @@ volatile int integralPartPI; //Integral part of PI
 volatile int errorPI;
 volatile int controlSignalPI;
 volatile unsigned int startingRPM;
-volatile unsigned int savedWantedRPM;
 
 volatile unsigned int showDutyCycle;
 
@@ -468,43 +467,42 @@ void controladorPI(unsigned int option) {
     unsigned int Kp = 5;
     unsigned int h = 1;
     unsigned int Ti = 5;
-    int dutyCycleMotorDirection = 1;
-    if (wantedRotation == ROTATING_TO_LEFT) dutyCycleMotorDirection = -dutyCycleMotorDirection;
 
     if (startingRPM) {
-        savedWantedRPM = wantedRPM;
-        wantedRPM = 1;
-    }
-    if (rpm < 10) {
-        wantedRPM = savedWantedRPM;
-        startingRPM = 0;
-    }
-
-    if (option == 1) {
-        //Professor Pedro Fonseca file in sweet.ua.pt website
-        int error = wantedRPM - rpm;
-        //        integralPartPI = integralPartPI + (Kp * h * error) / Ti;
-        integralPartPI = integralPartPI + error;
-        int uk = (Kp * error) + integralPartPI;
-        dutyCycle += (uk * dutyCycleMotorDirection);
-
-        if (dutyCycle < 0) dutyCycle = 0;
-        if (dutyCycle > 1000) dutyCycle = 1000;
+        if (dutyCycle > 490 && dutyCycle < 510)
+            startingRPM = 0;
+        if (500 - dutyCycle < 0) dutyCycle -= 10;
+        else dutyCycle += 10;
         changeDutyCycle2(0, dutyCycle);
-    }
+    } else {
+        int dutyCycleMotorDirection = 1;
+        if (wantedRotation == ROTATING_TO_LEFT) dutyCycleMotorDirection = -dutyCycleMotorDirection;
+        if (option == 1) {
+            //Professor Pedro Fonseca file in sweet.ua.pt website
+            int error = wantedRPM - rpm;
+            //        integralPartPI = integralPartPI + (Kp * h * error) / Ti;
+            integralPartPI = integralPartPI + error;
+            int uk = (Kp * error) + integralPartPI;
+            dutyCycle += (uk * dutyCycleMotorDirection);
 
-    if (option == 2) {
-        //PI controller given by SSD notes
-        int s0 = Kp + (Kp * h) / Ti; // s0(1) = 6
-        int s1 = -Kp; // s1(1) = -5
-        int prevError = errorPI;
-        errorPI = wantedRPM - rpm;
-        controlSignalPI = controlSignalPI + s0 * errorPI + s1*prevError;
+            if (dutyCycle < 0) dutyCycle = 0;
+            if (dutyCycle > 1000) dutyCycle = 1000;
+            changeDutyCycle2(0, dutyCycle);
+        }
 
-        dutyCycle += controlSignalPI*dutyCycleMotorDirection;
-        if (dutyCycle < 0) dutyCycle = 0;
-        if (dutyCycle > 1000) dutyCycle = 1000;
-        changeDutyCycle2(0, dutyCycle);
+        if (option == 2) {
+            //PI controller given by SSD notes
+            int s0 = Kp + (Kp * h) / Ti; // s0(1) = 6
+            int s1 = -Kp; // s1(1) = -5
+            int prevError = errorPI;
+            errorPI = wantedRPM - rpm;
+            controlSignalPI = controlSignalPI + s0 * errorPI + s1*prevError;
+
+            dutyCycle += controlSignalPI*dutyCycleMotorDirection;
+            if (dutyCycle < 0) dutyCycle = 0;
+            if (dutyCycle > 1000) dutyCycle = 1000;
+            changeDutyCycle2(0, dutyCycle);
+        }
     }
 }
 
