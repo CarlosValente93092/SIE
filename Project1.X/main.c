@@ -30,8 +30,8 @@
 #define USE_TIMER_2 0
 #define USE_TIMER_3 1
 
-#define ROTATING_TO_LEFT 0
-#define ROTATING_TO_RIGHT 1
+#define ROTATING_TO_LEFT 1
+#define ROTATING_TO_RIGHT 0
 
 // MOTOR Variables
 volatile unsigned int pulseCount;
@@ -60,6 +60,8 @@ volatile int dutyCycle;
 volatile int integralPartPI; //Integral part of PI
 volatile int errorPI;
 volatile int controlSignalPI;
+volatile unsigned int startingRPM;
+volatile unsigned int savedWantedRPM;
 
 volatile unsigned int showDutyCycle;
 
@@ -87,6 +89,7 @@ void controladorPI(unsigned int option);
 void controladorOnOff(void);
 
 void stopAtFixedAngle(void);
+void stopMotor(void);
 
 
 
@@ -110,8 +113,8 @@ void __ISR(_TIMER_4_VECTOR, IPL5AUTO) T4Interrupt(void) { //IPL5 is the priority
     if (displayValues) printMenuDados();
     if (showDutyCycle) printDutyCycle();
     if (wantedAngularPosition != 0) stopAtFixedAngle();
-    if (wantedRPM != 0) controladorOnOff();
-    //controladorPI(1);
+    //    if (wantedRPM != 0) controladorOnOff();
+    if (wantedRPM != 0) controladorPI(1);
     resetTimer4();
 }
 
@@ -253,7 +256,12 @@ int main(void) {
                 wantedRPM = 0;
                 wantedRotation = 0;
                 dutyCycle = 500;
+                changeDutyCycle2(0, dutyCycle);
                 printMenuGeral();
+                angularPosition = 0;
+                integralPartPI = 0;
+                errorPI = 0;
+                controlSignalPI = 0;
                 MENU = 0;
                 continue;
             case 127: //BACKSPACE
@@ -288,9 +296,12 @@ void initVariables(void) {
     showDutyCycle = 0;
     displayValues = 0;
     countTimer5 = 0;
+    errorPI = 0;
     controlSignalPI = 0;
     integralPartPI = 0;
     dutyCycle = 500;
+    angularPosition = 0;
+    startingRPM = 0;
 }
 
 void printMenuGeral(void) {
@@ -337,18 +348,22 @@ unsigned int validateExecuteCommand(uint8_t *command, unsigned int sizeOfArray, 
 
             wantedRPM = 0;
             wantedRotation = 0;
-            wantedRPM += (command[0] - 48) * 10 + command[1];
+            wantedRPM += (command[0] - 48) * 10 + (command[1] - 48);
             if (command[2] == '+') wantedRotation = ROTATING_TO_RIGHT;
             if (command[2] == '-') wantedRotation = ROTATING_TO_LEFT;
+
+
+            startingRPM = 1;
             return 1; //All good
         }
-        if (sizeOfArray == 1)
+        if (sizeOfArray == 1) {
             if (command[0] == '0') {
-                changeDutyCycle2(0, 500); //DutyCycle of 50% to stop motor
-                putString("\rStopping Motor!");
+                stopMotor();
                 activeTimer5 = 1;
                 return 1;
             }
+
+        }
         return 0; //Command was only 1 character long
     }
 
@@ -375,6 +390,7 @@ unsigned int validateExecuteCommand(uint8_t *command, unsigned int sizeOfArray, 
     }
 
     if (menu == 4) {
+        dutyCycle = 0;
         if (sizeOfArray > 3) return 0;
         for (int i = 0; i < sizeOfArray; i++) {
             if (command[i] < '0' || command[i] > '9') return 0; //Not a number
@@ -386,6 +402,12 @@ unsigned int validateExecuteCommand(uint8_t *command, unsigned int sizeOfArray, 
     }
 
     return 0; //Something when wrong
+}
+
+void stopMotor(void) {
+    wantedRPM = 0;
+    changeDutyCycle2(0, 500); //DutyCycle of 50% to stop motor
+    putString("\rStopping Motor!");
 }
 
 void resetCommand(uint8_t *command, unsigned int sizeOfArray) {
@@ -425,17 +447,14 @@ void printMenuDados(void) {
 
     putString(clearLine);
     putString("RPM: ");
-    if (rpm < 10) {
-        putInt(0);
-    }
+    if (rpm < 10) putInt(0);
+
     putInt(rpm);
     putString(", Angle:");
-    if (angularPosition < 100) {
-        putInt(0);
-    }
-    if (angularPosition < 10) {
-        putInt(0);
-    }
+    if (angularPosition < 100) putInt(0);
+
+    if (angularPosition < 10) putInt(0);
+
     putInt(angularPosition);
     putString(", Direction: ");
     if (rotation == ROTATING_TO_LEFT) {
@@ -450,15 +469,27 @@ void controladorPI(unsigned int option) {
     unsigned int h = 1;
     unsigned int Ti = 5;
     int dutyCycleMotorDirection = 1;
-    if (wantedRotation == 0) dutyCycleMotorDirection = -1;
+    if (wantedRotation == ROTATING_TO_LEFT) dutyCycleMotorDirection = -dutyCycleMotorDirection;
+
+    if (startingRPM) {
+        savedWantedRPM = wantedRPM;
+        wantedRPM = 1;
+    }
+    if (rpm < 10) {
+        wantedRPM = savedWantedRPM;
+        startingRPM = 0;
+    }
 
     if (option == 1) {
         //Professor Pedro Fonseca file in sweet.ua.pt website
         int error = wantedRPM - rpm;
-        integralPartPI = integralPartPI + (Kp * h * error) / Ti;
-        int uk = Kp * error + integralPartPI;
+        //        integralPartPI = integralPartPI + (Kp * h * error) / Ti;
+        integralPartPI = integralPartPI + error;
+        int uk = (Kp * error) + integralPartPI;
+        dutyCycle += (uk * dutyCycleMotorDirection);
 
-        dutyCycle += uk*dutyCycleMotorDirection;
+        if (dutyCycle < 0) dutyCycle = 0;
+        if (dutyCycle > 1000) dutyCycle = 1000;
         changeDutyCycle2(0, dutyCycle);
     }
 
@@ -471,6 +502,8 @@ void controladorPI(unsigned int option) {
         controlSignalPI = controlSignalPI + s0 * errorPI + s1*prevError;
 
         dutyCycle += controlSignalPI*dutyCycleMotorDirection;
+        if (dutyCycle < 0) dutyCycle = 0;
+        if (dutyCycle > 1000) dutyCycle = 1000;
         changeDutyCycle2(0, dutyCycle);
     }
 }
@@ -479,18 +512,22 @@ void controladorOnOff(void) {
     // wantedRPM, rpm, rotation, dutyCycle
     int U = 0;
     int error = wantedRPM - rpm;
-    int dutyCycleMotorDirection = 1; //Increase dutyCycle when rotating right
-    if (wantedRotation == 0) dutyCycleMotorDirection = -dutyCycleMotorDirection; //Decrease dutyCycle when rotating left
+    int dutyCycleMotorDirection = 10; //Increase dutyCycle when rotating right
+    if (wantedRotation == ROTATING_TO_LEFT) dutyCycleMotorDirection = -dutyCycleMotorDirection; //Decrease dutyCycle when rotating left
 
-    if (error == 0) U = 0;
-    else if (error > 0) U = dutyCycleMotorDirection;
-    else U = -dutyCycleMotorDirection;
+    if (error == 0)
+        U = 0;
+    else if (error > 0)
+        U = dutyCycleMotorDirection;
+    else
+        U = -dutyCycleMotorDirection;
 
     dutyCycle = dutyCycle + U;
     changeDutyCycle2(0, dutyCycle);
 }
 
 void stopAtFixedAngle(void) {
+    changeDutyCycle2(0, 750);
     if (angularPosition >= wantedAngularPosition) changeDutyCycle2(0, 500);
 }
 
