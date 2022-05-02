@@ -41,6 +41,7 @@ volatile unsigned int RXFlag;
 volatile uint8_t RXChar;
 
 //Interruption function for UART RX for menus
+
 void __ISR(_UART1_VECTOR, IPL3AUTO) UART1ISR(void) {
     if (IFS0bits.U1RXIF) {
         RXFlag = 1;
@@ -112,7 +113,7 @@ int main(void) {
     putString("3. Change PWM!\n\r");
 
     previousVoltage = 0; //Initial atribution of value for previous voltage
-    unsigned int MENU = 0;  //Holds which menu we are on
+    unsigned int MENU = 0; //Holds which menu we are on
     unsigned int dutyCycle = 0; //Duty cycle for PWM
     unsigned int maxVoltage = 0; //Max value of voltage detected
     unsigned int minVoltage = 33; //Min value of voltage detected
@@ -163,9 +164,9 @@ int main(void) {
             putString("Voltage: ");
             putVoltage(voltage);
             putString(" Volts");
-          
+
             //Change duty cycle to the current voltage after passing a LP filter (FIR)
-            changeDutyCycle2(USE_TIMER_2, C(voltage);
+            changeDutyCycle2(USE_TIMER_2, C(voltage));
         }
 
         // Skip if it didn't receive a character
@@ -179,7 +180,7 @@ int main(void) {
                 if (dutyCycle > 1000) dutyCycle = 1000; //Limit of 100% for duty cycle
                 changeDutyCycle2(0, dutyCycle); //change duty cycle
                 continue;
-            case '-':  //Decrement duty cycle
+            case '-': //Decrement duty cycle
                 if (MENU != 3) break;
                 if (dutyCycle - 50 < 0) dutyCycle = 0; //limit of 0% for duty cycle
                 else dutyCycle -= 50; //Decrement of 5%
@@ -204,7 +205,7 @@ int main(void) {
                 changeDutyCycle2(0, 0); //Change duty cycle to be at 0%
                 MENU = 0; //back to main menu
                 maxVoltage = 0; //set max voltage to minimum
-                minVoltage = 33;  //set min voltage to maximum
+                minVoltage = 33; //set min voltage to maximum
                 putString(clearLine); //clear line of terminal
                 continue;
             default: //anything else
