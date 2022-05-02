@@ -57,6 +57,7 @@ int main(void) {
     INTCONSET = _INTCON_MVEC_MASK; // Multi vector mode for interrupts
 
     TRISAbits.TRISA3 = TRIS_OUT; //Set port A3 to output (LED4)
+    TRISDbits.TRISD4 = TRIS_OUT; //Set port D4 to output (pin 10)
 
     // Timer for sampling
     unsigned int Fout5 = 100; //Hz
@@ -149,6 +150,7 @@ int main(void) {
 
         if (MENU == 2) { //Normal Rate Sampling
             waitTimer5(); //wait for timer to finish
+            PORTDbits.RD4 = !PORTDbits.RD4; //We will see at this digital output, half of frequency of the sampling frequency defined (pin 10)
             resetTimer5(); //Reset timer
 
             startADC(); //start sampling
