@@ -491,7 +491,7 @@ void controladorPI(unsigned int option) {
             //Professor Pedro Fonseca file in sweet.ua.pt website
             int error = wantedRPM - rpm;
             //        integralPartPI = integralPartPI + (Kp * h * error) / Ti;
-            integralPartPI = integralPartPI + error;
+            integralPartPI = integralPartPI + (Kp * h * error) / Ti;
             int uk = (Kp * error) + integralPartPI;
             dutyCycle += (uk * dutyCycleMotorDirection);
 

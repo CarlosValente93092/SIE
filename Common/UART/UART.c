@@ -103,9 +103,8 @@ void putInt(int number) {
     putString(charBuffer);
 }
 
-
-
-///* PRIVATE - Needed for printf() function from stdio library */
-//void _mon_putc(char c) {
-//    putChar((uint8_t) c);
-//}
+void putVoltage(unsigned int voltage) {
+    putInt(voltage / 10);
+    putChar('.');
+    putInt(voltage % 10);
+}

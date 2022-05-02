@@ -149,13 +149,12 @@ int setupADC(unsigned int analogPort, unsigned int numberSamples, unsigned int u
     return SETUP_ADC_SUCCESS;
 }
 
-int getValuesADC(uint64_t *rawValue) {
+int getValuesADC() {
     int sum = 0;
     for (int *p = (int *) (&ADC1BUF0); p <= (int *) (&ADC1BUFF); p += 4) {
         sum += *p;
     }
     uint64_t mean = sum / (AD1CON2bits.SMPI + 1);
-    *rawValue = mean;
     return (mean * 33 + 511) / 1023;
 }
 
