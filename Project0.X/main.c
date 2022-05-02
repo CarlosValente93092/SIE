@@ -163,11 +163,7 @@ int main(void) {
             putString("Voltage: ");
             putVoltage(voltage);
             putString(" Volts");
-
-            //Update max or min voltages accordingly
-            if (voltage > maxVoltage) maxVoltage = voltage;
-            else if (voltage < minVoltage) minVoltage = voltage;
-            unsigned int meanVoltage = (maxVoltage + minVoltage) / 2; //Mean voltage
+          
             //Change duty cycle to the current voltage after passing a LP filter (FIR)
             changeDutyCycle2(USE_TIMER_2, C(voltage);
         }
