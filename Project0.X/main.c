@@ -58,10 +58,10 @@ int main(void) {
     INTCONSET = _INTCON_MVEC_MASK; // Multi vector mode for interrupts
 
     TRISAbits.TRISA3 = TRIS_OUT; //Set port A3 to output (LED4)
-    //    TRISDbits.TRISD4 = TRIS_OUT; //Set port D4 to output (pin 10)
+    TRISDbits.TRISD4 = TRIS_OUT; //Set port D4 to output (pin 10)
 
     // Timer for sampling
-    unsigned int Fout5 = 100; //Hz
+    unsigned int Fout5 = 200; //Hz
     if (setupTimer5(Fout5, TIMER_USE_POLLING, 0) != TIMER_SETUP_SUCCESS) {
         PORTAbits.RA3 = 0;
         putString("TIMER 5 ERROR\n\r");
@@ -117,6 +117,7 @@ int main(void) {
     unsigned int dutyCycle = 0; //Duty cycle for PWM
     unsigned int maxVoltage = 0; //Max value of voltage detected
     unsigned int minVoltage = 33; //Min value of voltage detected
+    PORTDbits.RD4 = 0;
 
     while (1) {
 
@@ -138,7 +139,7 @@ int main(void) {
                 putString(clearLine);
                 putString("Voltage: ");
                 putVoltage(voltage);
-                putString(" Volts");
+                putString(" V");
 
                 //Update max or min voltages accordingly
                 if (voltage > maxVoltage) maxVoltage = voltage;
@@ -151,19 +152,23 @@ int main(void) {
 
         if (MENU == 2) { //Normal Rate Sampling
             waitTimer5(); //wait for timer to finish
-            //            PORTDbits.RD4 = !PORTDbits.RD4; //We will see at this digital output, half of frequency of the sampling frequency defined (pin 10)
             resetTimer5(); //Reset timer
 
+            PORTDbits.RD4 = !PORTDbits.RD4; //We will see at this digital output, half of frequency of the sampling frequency defined (pin 10)
             startADC(); //start sampling
             waitADC(); //wait for ADC to finish
             voltage = getValuesADC(); //Get values
             resetADC(); //Reset ADC
 
             //Print voltage information
-            putString(clearLine);
-            putString("Voltage: ");
-            putVoltage(voltage);
-            putString(" Volts");
+            count++;
+            if (count > Fout5 / 60) {
+                count = 0;
+                putString(clearLine);
+                putString("Voltage: ");
+                putVoltage(voltage);
+                putString(" V");
+            }
 
             //Change duty cycle to the current voltage after passing a LP filter (FIR)
             changeDutyCycle2(USE_TIMER_2, C(voltage));
@@ -207,6 +212,7 @@ int main(void) {
                 maxVoltage = 0; //set max voltage to minimum
                 minVoltage = 33; //set min voltage to maximum
                 putString(clearLine); //clear line of terminal
+                count = 0;
                 continue;
             default: //anything else
                 break;
@@ -216,7 +222,8 @@ int main(void) {
 }
 
 unsigned int C(unsigned int voltage) {
-    //    unsigned int FIR = (voltage + previousVoltage) / 2; //Simple low pass FIR filter (attenuates rapid transitions)
-    //    previousVoltage = voltage; //save current voltage for next calculation
+    unsigned int FIR = (voltage + previousVoltage) / 2; //Simple low pass FIR filter (attenuates rapid transitions)
+    previousVoltage = voltage; //save current voltage for next calculation
+    //    return (FIR * 1000) / 33; //Associate 3.3V to 100% for duty cycle
     return (voltage * 1000) / 33; //Associate 3.3V to 100% for duty cycle
 }
