@@ -58,7 +58,7 @@ int main(void) {
     INTCONSET = _INTCON_MVEC_MASK; // Multi vector mode for interrupts
 
     TRISAbits.TRISA3 = TRIS_OUT; //Set port A3 to output (LED4)
-    TRISDbits.TRISD4 = TRIS_OUT; //Set port D4 to output (pin 10)
+    //    TRISDbits.TRISD4 = TRIS_OUT; //Set port D4 to output (pin 10)
 
     // Timer for sampling
     unsigned int Fout5 = 100; //Hz
@@ -151,7 +151,7 @@ int main(void) {
 
         if (MENU == 2) { //Normal Rate Sampling
             waitTimer5(); //wait for timer to finish
-            PORTDbits.RD4 = !PORTDbits.RD4; //We will see at this digital output, half of frequency of the sampling frequency defined (pin 10)
+            //            PORTDbits.RD4 = !PORTDbits.RD4; //We will see at this digital output, half of frequency of the sampling frequency defined (pin 10)
             resetTimer5(); //Reset timer
 
             startADC(); //start sampling
@@ -197,7 +197,7 @@ int main(void) {
             case '3': //manual increment/decrement of duty cycle
                 if (MENU != 0) break;
                 MENU = 3; //Select menu 3
-                dutyCycle = 0; //Change duty cycle to be at 0%
+                dutyCycle = 500; //Change duty cycle to be at 0%
                 putString("PWM"); //Posicional string to indicate we are on menu 3
                 continue;
             case 27: //ESC, return to previous menu (if possible)
@@ -216,7 +216,7 @@ int main(void) {
 }
 
 unsigned int C(unsigned int voltage) {
-    unsigned int FIR = (voltage + previousVoltage) / 2; //Simple low pass FIR filter (attenuates rapid transitions)
-    previousVoltage = voltage; //save current voltage for next calculation
+    //    unsigned int FIR = (voltage + previousVoltage) / 2; //Simple low pass FIR filter (attenuates rapid transitions)
+    //    previousVoltage = voltage; //save current voltage for next calculation
     return (voltage * 1000) / 33; //Associate 3.3V to 100% for duty cycle
 }
