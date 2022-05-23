@@ -107,41 +107,41 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/1dfe1b279dfd1b57bc33c4fed0a9cf19984037d8 .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
+${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/d2c6878b2458c680e7db3ddeb4af0097f50b7c7c .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
 	@${RM} ${OBJECTDIR}/main.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/main.o.d" -o ${OBJECTDIR}/main.o main.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/_ext/922767997/UART.o: ../Common/UART/UART.c  .generated_files/flags/default/e053feaa7cbfbfb43b6bdfe46807dff83e78a199 .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
+${OBJECTDIR}/_ext/922767997/UART.o: ../Common/UART/UART.c  .generated_files/flags/default/80932b25c98473589b67c367f6b8a74318bdf40f .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
 	@${MKDIR} "${OBJECTDIR}/_ext/922767997" 
 	@${RM} ${OBJECTDIR}/_ext/922767997/UART.o.d 
 	@${RM} ${OBJECTDIR}/_ext/922767997/UART.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/922767997/UART.o.d" -o ${OBJECTDIR}/_ext/922767997/UART.o ../Common/UART/UART.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/922767997/UART.o.d" -o ${OBJECTDIR}/_ext/922767997/UART.o ../Common/UART/UART.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/_ext/1355687467/ADC.o: ../Common/ADC/ADC.c  .generated_files/flags/default/2b98b6470eb9d3f5d0b942452222d620ed3b1c46 .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
+${OBJECTDIR}/_ext/1355687467/ADC.o: ../Common/ADC/ADC.c  .generated_files/flags/default/c16ca087783dbc8f1079b57dc91f7b2769fb0d71 .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
 	@${MKDIR} "${OBJECTDIR}/_ext/1355687467" 
 	@${RM} ${OBJECTDIR}/_ext/1355687467/ADC.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1355687467/ADC.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/1355687467/ADC.o.d" -o ${OBJECTDIR}/_ext/1355687467/ADC.o ../Common/ADC/ADC.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/1355687467/ADC.o.d" -o ${OBJECTDIR}/_ext/1355687467/ADC.o ../Common/ADC/ADC.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/_ext/2007646109/Timers.o: ../Common/Timers/Timers.c  .generated_files/flags/default/35c14c8bfa99585e0c5dc950d09cad0869a1c972 .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
+${OBJECTDIR}/_ext/2007646109/Timers.o: ../Common/Timers/Timers.c  .generated_files/flags/default/644fb80475a946861ea4ba9e967b20f4b7642c9e .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
 	@${MKDIR} "${OBJECTDIR}/_ext/2007646109" 
 	@${RM} ${OBJECTDIR}/_ext/2007646109/Timers.o.d 
 	@${RM} ${OBJECTDIR}/_ext/2007646109/Timers.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/2007646109/Timers.o.d" -o ${OBJECTDIR}/_ext/2007646109/Timers.o ../Common/Timers/Timers.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/2007646109/Timers.o.d" -o ${OBJECTDIR}/_ext/2007646109/Timers.o ../Common/Timers/Timers.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/_ext/1355702481/PWM.o: ../Common/PWM/PWM.c  .generated_files/flags/default/282f010ab45296598736442da3d50b1ebde0b461 .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
+${OBJECTDIR}/_ext/1355702481/PWM.o: ../Common/PWM/PWM.c  .generated_files/flags/default/d478fbdbf37f2c443142f8c299154995849f7580 .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
 	@${MKDIR} "${OBJECTDIR}/_ext/1355702481" 
 	@${RM} ${OBJECTDIR}/_ext/1355702481/PWM.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1355702481/PWM.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/1355702481/PWM.o.d" -o ${OBJECTDIR}/_ext/1355702481/PWM.o ../Common/PWM/PWM.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/1355702481/PWM.o.d" -o ${OBJECTDIR}/_ext/1355702481/PWM.o ../Common/PWM/PWM.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/_ext/1201089759/ExternalInterrupt.o: /home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt/ExternalInterrupt.c  .generated_files/flags/default/e8dc7f32f14585e7e9c83fa4ef8f63d1b55abe3c .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
+${OBJECTDIR}/_ext/1201089759/ExternalInterrupt.o: /home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt/ExternalInterrupt.c  .generated_files/flags/default/41f2fab1381d0f86b7a9abcb96b6199b2c6571a4 .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
 	@${MKDIR} "${OBJECTDIR}/_ext/1201089759" 
 	@${RM} ${OBJECTDIR}/_ext/1201089759/ExternalInterrupt.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1201089759/ExternalInterrupt.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/1201089759/ExternalInterrupt.o.d" -o ${OBJECTDIR}/_ext/1201089759/ExternalInterrupt.o /home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt/ExternalInterrupt.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/_ext/1201089759/ExternalInterrupt.o.d" -o ${OBJECTDIR}/_ext/1201089759/ExternalInterrupt.o /home/carlosfmv/Desktop/SIE/Pratica/SIE/Common/ExternalInterrupt/ExternalInterrupt.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 else
 ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/eb3767676dfd599fb36c7f942ed024ae55258eb0 .generated_files/flags/default/f771c43d2b5d2a67da2c4ea3e647e16a157ee5dd
@@ -193,7 +193,7 @@ endif
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
 ${DISTDIR}/Project1.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk    
 	@${MKDIR} ${DISTDIR} 
-	${MP_CC} $(MP_EXTRA_LD_PRE) -g -mdebugger -D__MPLAB_DEBUGGER_PK3=1 -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${DISTDIR}/Project1.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}          -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)   -mreserve=data@0x0:0x1FC -mreserve=boot@0x1FC02000:0x1FC02FEF -mreserve=boot@0x1FC02000:0x1FC024FF  -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D=__DEBUG_D,--defsym=__MPLAB_DEBUGGER_PK3=1,--no-code-in-dinit,--no-dinit-in-serial-mem,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--memorysummary,${DISTDIR}/memoryfile.xml -mdfp="${DFP_DIR}"
+	${MP_CC} $(MP_EXTRA_LD_PRE) -g   -mprocessor=$(MP_PROCESSOR_OPTION)  -o ${DISTDIR}/Project1.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} ${OBJECTFILES_QUOTED_IF_SPACED}          -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)      -Wl,--defsym=__MPLAB_BUILD=1$(MP_EXTRA_LD_POST)$(MP_LINKER_FILE_OPTION),--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1,-D=__DEBUG_D,--no-code-in-dinit,--no-dinit-in-serial-mem,-Map="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map",--memorysummary,${DISTDIR}/memoryfile.xml -mdfp="${DFP_DIR}"
 	
 else
 ${DISTDIR}/Project1.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   

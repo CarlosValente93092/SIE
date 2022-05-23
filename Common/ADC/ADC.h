@@ -74,5 +74,9 @@ void startADC(void);
 void waitADC(void);
 void resetADC(void);
 
+int setup2ADC(unsigned int, unsigned int);
+int getValues2ADCA(void);
+int getValues2ADCB(void);
+
 #endif 
 

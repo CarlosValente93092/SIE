@@ -104,5 +104,6 @@ void waitForChar(void);
 void putInt(int);
 
 void putVoltage(unsigned int);
+void putVoltage100(unsigned int);
 
 #endif

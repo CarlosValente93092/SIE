@@ -139,10 +139,42 @@ int setupADC(unsigned int analogPort, unsigned int numberSamples, unsigned int u
     AD1CHSbits.CH0SA = analogPort; // Input analog channel (0 to 15)
 
 
+
+
     if (useInterrupts) {
         IPC6bits.AD1IP = 2; // configure priority of A/D interrupts
         IEC1bits.AD1IE = 1; // enable A/D interrupts
     }
+    IFS1bits.AD1IF = 0;
+    AD1CON1bits.ON = 1; // Enable A/D converter
+
+    return SETUP_ADC_SUCCESS;
+}
+
+int setup2ADC(unsigned int analogPort1, unsigned int analogPort2) {
+    if (analogPort1 > 15) return SETUP_ADC_ERROR;
+    if (analogPort2 > 15) return SETUP_ADC_ERROR;
+
+    configureAnalog(analogPort1);
+    configureAnalog(analogPort2);
+    // Conversion trigger selection bits: in this mode an internal counter ends sampling and starts conversion
+    AD1CON1bits.SSRC = 7;
+    // Stop conversions when the 1st A/D converter interrupt is generated. At the same time, hardware clears the ASAM bit
+    AD1CON1bits.CLRASAM = 1;
+    AD1CON3bits.SAMC = 16; // Sample time is 16 TAD (TAD = 100 ns)
+
+    AD1CON2bits.SMPI = 7; //Interrupt is generated after 8 samples for both MUX
+    AD1CON2bits.ALTS = 1; //Allow to switch between MUX A and B
+    //MUX A
+    AD1CHSbits.CH0SA = analogPort1; // Input analog channel (0 to 15)
+    AD1CHSbits.CH0NA = 0; //Select VR- for MUX A negative input
+    AD1CON2bits.CSCNA = 0; //No input scan
+    //MUX B
+    AD1CHSbits.CH0SB = analogPort2; // Input analog channel (0 to 15)
+    AD1CHSbits.CH0NB = 0; //Select VR- for MUX B negative input
+
+    IPC6bits.AD1IP = 2; // configure priority of A/D interrupts
+    IEC1bits.AD1IE = 1; // enable A/D interrupts
     IFS1bits.AD1IF = 0;
     AD1CON1bits.ON = 1; // Enable A/D converter
 
@@ -156,6 +188,24 @@ int getValuesADC() {
     }
     uint64_t mean = sum / (AD1CON2bits.SMPI + 1);
     return (mean * 33 + 511) / 1023;
+}
+
+int getValues2ADCA() {
+    int sum = 0;
+    for (int *p = (int *) (&ADC1BUF0); p <= (int *) (&ADC1BUFF); p += 8) { //BUf 0,2,4,6 (,8,10,12,14))
+        sum += *p;
+    }
+    uint64_t mean = 2 * sum / (AD1CON2bits.SMPI + 1);
+    return (mean * 330 + 511) / 1023;
+}
+
+int getValues2ADCB() {
+    int sum = 0;
+    for (int *p = (int *) (&ADC1BUF1); p <= (int *) (&ADC1BUFF); p += 8) { //BUf 1,3,5,7 (,9,11,13,15))
+        sum += *p;
+    }
+    uint64_t mean = 2 * sum / (AD1CON2bits.SMPI + 1);
+    return (mean * 330 + 511) / 1023;
 }
 
 void startADC(void) {

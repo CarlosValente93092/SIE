@@ -108,3 +108,9 @@ void putVoltage(unsigned int voltage) {
     putChar('.');
     putInt(voltage % 10);
 }
+
+void putVoltage100(unsigned int voltage) {
+    putInt(voltage / 100);
+    putChar('.');
+    putInt(voltage % 100);
+}

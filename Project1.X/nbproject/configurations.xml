@@ -41,7 +41,7 @@
         <targetDevice>PIC32MX795F512L</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PK3OBPlatformTool</platformTool>
+        <platformTool></platformTool>
         <languageToolchain>XC32</languageToolchain>
         <languageToolchainVersion>4.00</languageToolchainVersion>
         <platform>2</platform>
@@ -212,12 +212,6 @@
         <property key="stack-smashing" value=""/>
         <property key="wpo-lto" value="false"/>
       </C32Global>
-      <PK3OBPlatformTool>
-        <property key="firmware.download.all" value="false"/>
-      </PK3OBPlatformTool>
-      <Tool>
-        <property key="firmware.download.all" value="false"/>
-      </Tool>
     </conf>
   </confs>
 </configurationDescriptor>

@@ -40,7 +40,7 @@
 #define SETUP_PWM_SUCCESS 0
 #define SETUP_PWM_ERROR -1
 
-#define PWM_MAX_VALUE 1000
+#define PWM_MAX_VALUE 100
 
 /********************************************************************
 * Function: 	getOCXRS()
