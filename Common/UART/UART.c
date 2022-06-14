@@ -81,6 +81,10 @@ void waitForChar(void) {
 void putInt(int number) {
     if (number > INT32_MAX) putString("Number to print bigger than INT32_MAX\n");
     if (number == 0) putChar('0');
+    if (number < 0) {
+        putChar('-');
+        number = abs(number);
+    }
 
     int digitsBuffer[SIZE_NUMBER_DECIMAL]; // INT32_MAX = 4294967295 (10 digits))
     char charBuffer[SIZE_NUMBER_DECIMAL + 1]; // Max of 10 digits plus '\0'
